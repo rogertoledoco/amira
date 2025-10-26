@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detalles Amira — Personalizados</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#F6F0EA;           /* beige suave */
+      --bg-soft:#FBF7F4;      /* más claro para tarjetas */
+      --ink:#2A2A2A;          /* texto principal */
+      --muted:#6E6B67;        /* texto secundario */
+      --brand:#BFA6CC;        /* lila */
+      --brand-strong:#9F7FB3; /* lila más intenso */
+      --accent:#D7C3A3;       /* dorado suave */
+      --radius:22px;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{
+      background:linear-gradient(180deg,var(--bg),#FFF 480px);
+      color:var(--ink);
+      font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+      line-height:1.5;
+    }
+    .wrap{max-width:1200px;margin-inline:auto;padding:28px 20px 80px}
+    header{padding:28px 0 14px; text-align:center}
+    h1{
+      font-family:'Playfair Display', serif;
+      font-weight:700; letter-spacing:.02em; margin:0 0 6px; font-size:clamp(28px,5vw,44px);
+    }
+    .sub{color:var(--muted); font-size:clamp(14px,2.2vw,16px)}
+    .divider{width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:14px auto 26px;border-radius:2px}
+
+    /* GRID */
+    .grid{display:grid; gap:18px; grid-template-columns:repeat(2,1fr)}
+    @media (min-width:720px){.grid{grid-template-columns:repeat(3,1fr); gap:20px}}
+    @media (min-width:1024px){.grid{grid-template-columns:repeat(5,1fr); gap:22px}}
+
+    .card{
+      background:var(--bg-soft);
+      border-radius:var(--radius);
+      position:relative; 
+      overflow:hidden; 
+      box-shadow:var(--shadow);
+      aspect-ratio:1/1;                /* CUADRADO */
+      display:flex; align-items:flex-end; justify-content:stretch;
+      cursor:pointer; isolation:isolate;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .card:focus-visible{outline:3px solid var(--brand-strong); outline-offset:2px}
+    .card:hover{transform:translateY(-4px); box-shadow:0 16px 34px rgba(0,0,0,.12)}
+
+    .thumb{position:absolute; inset:0; z-index:0}
+    .thumb img{
+      width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.98) contrast(1.02);
+      transition: transform .6s ease;
+    }
+    .card:hover .thumb img{transform:scale(1.04)}
+
+    /* RIBBON overlay */
+    .ribbon{
+      position:absolute; top:14px; left:14px; z-index:2; 
+      background:rgba(191,166,204,.92); color:#FFF; 
+      padding:6px 10px; border-radius:999px; font-size:12px; letter-spacing:.02em;
+      box-shadow:0 6px 14px rgba(159,127,179,.25)
+    }
+
+    .caption{
+      width:100%; position:relative; z-index:1; padding:14px 14px 16px; 
+      background:linear-gradient(0deg, rgba(0,0,0,.52), rgba(0,0,0,0));
+      color:#fff;
+    }
+    .caption h3{margin:0 0 4px; font-weight:600; font-size:15px}
+    .caption .price{font-size:13px; opacity:.9}
+
+    /* MODAL */
+    .modal{position:fixed; inset:0; display:none; place-items:center; z-index:50}
+    .modal.open{display:grid}
+    .backdrop{position:absolute; inset:0; background:rgba(20,18,17,.55); backdrop-filter:blur(2px)}
+    .sheet{
+      position:relative; background:#fff; width:min(920px,92vw); border-radius:28px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.28);
+      display:grid; grid-template-columns: 1.1fr .9fr;
+    }
+    @media (max-width:720px){.sheet{grid-template-columns:1fr}}
+    .sheet .media{background:var(--bg-soft)}
+    .sheet .media img{width:100%; height:100%; object-fit:cover; display:block}
+    .sheet .content{padding:26px 24px 22px}
+    .badge{display:inline-flex; gap:8px; align-items:center; font-size:12px; color:#6f5f7d; background:#F2ECF7; padding:6px 10px; border-radius:999px}
+    .sheet h2{font-family:'Playfair Display',serif; margin:.6rem 0 .35rem; font-size:clamp(22px,3.2vw,30px)}
+    .meta{color:var(--muted); font-size:14px}
+    .price-b{
+      margin:12px 0 14px; font-weight:600; font-size:18px; color:#2f2440
+    }
+    ul.features{margin:14px 0 18px; padding-left:18px}
+    ul.features li{margin:6px 0}
+    .cta{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{appearance:none; border:0; padding:12px 16px; border-radius:16px; font-weight:600; cursor:pointer}
+    .btn.primary{background:var(--brand-strong); color:#fff}
+    .btn.ghost{background:#EFE7F5; color:#3d3050}
+    .btn:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+    .close{position:absolute; top:12px; right:12px; background:#fff; width:38px; height:38px; border-radius:999px; display:grid; place-items:center; box-shadow:var(--shadow); cursor:pointer}
+    .close svg{width:18px; height:18px}
+
+    /* Helper when image missing */
+    .ph{
+      display:grid; place-items:center; color:#8a7f74; background:repeating-linear-gradient(45deg,#f5efe7,#f5efe7 12px,#f0e8df 12px,#f0e8df 24px);
+      font-size:12px; text-transform:uppercase; letter-spacing:.12em
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>POLERAS PERSONALIZADAS</h1>
+      <p class="sub">Selección premium de *Detalles Amira*. Haz clic en un diseño para ver sus detalles.</p>
+      <div class="divider" aria-hidden="true"></div>
+    </header>
+
+    <section class="grid" id="grid">
+      <!-- TARJETAS (10)  -->
+      <!-- Usa data-img para colocar luego tu foto real; si no existe mostrará un patrón elegante -->
+
+      <!-- 1 -->
+      <article tabindex="0" class="card" data-id="1" data-name="enfermera bonita" data-price="S/ 60" data-desc= data-items="franela reflectivo;estampado de alta calidad;buenas costuras" data-img="assets/poleras/1.jpg">
+        <span class="ribbon">Más pedido</span>
+        <div class="thumb"><div class="ph">Cargar foto 1</div></div>
+        <div class="caption"><h3>enfermera bonita</h3><span class="price">S/ 60</span></div>
+      </article>
+
+      <!-- 2 -->
+      <article tabindex="0" class="card" data-id="2" data-name="Danny ocean" data-price="S/ 59" data-desc="" data-items="algodon de calidad;estampado dtf" data-img="assets/poleras/2.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 2</div></div>
+        <div class="caption"><h3>Danny ocean</h3><span class="price">S/ 59</span></div>
+      </article>
+
+      <!-- 3 -->
+      <article tabindex="0" class="card" data-id="3" data-name="el rey de la casa" data-price="S/ 60" data-desc= data-items="algodon de alta calidad;estapando dtf" data-img="assets/poleras/3.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 3</div></div>
+        <div class="caption"><h3>Reina del Día</h3><span class="price">S/ 60</span></div>
+      </article>
+
+      <!-- 4 -->
+      <article tabindex="0" class="card" data-id="4" data-name="Amor Infinito" data-price="S/ 159" data-desc= data-items="2 pares de poleras;franela reactiva;estampado de alta calidad" data-img="assets/poleras/4.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 4</div></div>
+        <div class="caption"><h3>Amor Infinito</h3><span class="price">S/ 159</span></div>
+      </article>
+
+      <!-- 5 -->
+      <article tabindex="0" class="card" data-id="5" data-name="energia premium" data-price="S/ 80" data-desc= data-items="algodon de alta calidad ;estampado dtf;diferentes modelos" data-img="assets/poleras/5.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 5</div></div>
+        <div class="caption"><h3>energia premium</h3><span class="price">S/ 80</span></div>
+      </article>
+
+      <!-- 6 -->
+      <article tabindex="0" class="card" data-id="6" data-name="shakira" data-price="S/ 80" data-desc= data-items="polos de alta calidad ;estapado dtf;" data-img="assets/poleras/6.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 6</div></div>
+        <div class="caption"><h3></h3><span class="price">S/ 80</span></div>
+      </article>
+
+      <!-- 7 -->
+      <article tabindex="0" class="card" data-id="7" data-name="halowwen" data-price="S/ 80" data-desc= data-items="diseños especiales de peru consultar ;franela reactiva;estanpado de alta calidad;mas de 10 modelos por hallowen" data-img="assets/poleras/7.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 7</div></div>
+        <div class="caption"><h3>hallowwen</h3><span class="price">S/ 80</span></div>
+      </article>
+
+      <!-- 8 -->
+      <article tabindex="0" class="card" data-id="8" data-name="peru" data-price="S/ 80" data-desc=" data-items="alta calidad de algodon;estanpado dtf;cualquier modeloa " data-img="assets/poleras/8.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 8</div></div>
+        <div class="caption"><h3>peru</h3><span class="price">S/ 80</span></div>
+      </article>
+
+      <!-- 9 -->
+      <article tabindex="0" class="card" data-id="9" data-name="hallowwen llego" data-price="S/ 85" data-desc="Clásicos que nunca fallan." data-items="poleras personalizadas por halloween;mas de 20 diseños;algodon de alta calidad" data-img="assets/poleras/9.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 9</div></div>
+        <div class="caption"><h3>hallowwen llego</h3><span class="price">S/ 85</span></div>
+      </article>
+
+      <!-- 10 -->
+      <article tabindex="0" class="card" data-id="10" data-name="Signature" data-price="S/ 55" data-desc= data-items="diseños personalizados;algodon alta calidad;estampado dtf" data-img="assets/poleras/10.jpg">
+        <div class="thumb"><div class="ph">Cargar foto 10</div></div>
+        <div class="caption"><h3>Signature</h3><span class="price">S/ 55</span></div>
+      </article>
+    </section>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-labelledby="m-title">
+    <div class="backdrop" data-close></div>
+    <div class="sheet">
+      <button class="close" aria-label="Cerrar" data-close>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div class="media"><img id="m-img" alt="" /></div>
+      <div class="content">
+        <span class="badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5.5 20l2-7L2 9h7z"/></svg>
+          Detalles Amira
+        </span>
+        <h2 id="m-title">Título</h2>
+        <div class="meta" id="m-desc">Descripción del producto.</div>
+        <div class="price-b" id="m-price">S/ 0</div>
+        <ul class="features" id="m-list"></ul>
+        <div class="cta">
+          <button class="btn primary" id="btn-whatsapp">Pedir por WhatsApp</button>
+          <button class="btn ghost" data-close>Seguir viendo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Cargar imagenes reales si existen (data-img). Si no, queda el patrón .ph
+    function mountImages(){
+      document.querySelectorAll('.card').forEach(card=>{
+        const src = card.getAttribute('data-img');
+        const thumb = card.querySelector('.thumb');
+        if(src){
+          const img = new Image();
+          img.alt = card.getAttribute('data-name');
+          img.onload = ()=>{ thumb.innerHTML = ''; thumb.appendChild(img); };
+          img.onerror = ()=>{}; // Si falla, se mantiene placeholder
+          img.src = src;
+        }
+      })
+    }
+
+    // Modal
+    const modal = document.getElementById('modal');
+    const mImg  = document.getElementById('m-img');
+    const mTitle= document.getElementById('m-title');
+    const mDesc = document.getElementById('m-desc');
+    const mPrice= document.getElementById('m-price');
+    const mList = document.getElementById('m-list');
+    const btnWA = document.getElementById('btn-whatsapp');
+
+    function openModal(data){
+      const {name, desc, price, items, img, id} = data;
+      mTitle.textContent = name;
+      mDesc.textContent  = desc || '';
+      mPrice.textContent = price || '';
+      mImg.src = img || '';
+      mImg.alt = name;
+      mList.innerHTML = '';
+      if(items){
+        items.split(';').forEach(x=>{
+          const li = document.createElement('li');
+          li.textContent = x.trim();
+          if(li.textContent) mList.appendChild(li);
+        })
+      }
+      // WhatsApp CTA (ajusta tu número)
+      const phone = '51999999999'; // <-- REEMPLAZA con tu número
+      const text = encodeURIComponent(`Hola, quisiera el *${name}* — ${price}`);
+      btnWA.onclick = ()=> window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      // cerrar con ESC
+      document.addEventListener('keydown', escClose);
+    }
+
+    function escClose(e){ if(e.key==='Escape'){ closeModal(); } }
+    function closeModal(){
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      document.removeEventListener('keydown', escClose);
+    }
+
+    // Delegación de eventos en la GRID
+    document.getElementById('grid').addEventListener('click', (e)=>{
+      const card = e.target.closest('.card');
+      if(!card) return;
+      const data = {
+        id: card.dataset.id,
+        name: card.dataset.name,
+        price: card.dataset.price,
+        desc: card.dataset.desc,
+        items: card.dataset.items,
+        img: card.dataset.img
+      };
+      openModal(data);
+    });
+
+    document.querySelectorAll('[data-close]').forEach(el=>{
+      el.addEventListener('click', closeModal);
+    });
+
+    // Accesibilidad: abrir también con Enter/Espacio cuando la tarjeta tiene foco
+    document.querySelectorAll('.card').forEach(card=>{
+      card.addEventListener('keydown', (e)=>{
+        if(e.key==='Enter' || e.key===' '){
+          e.preventDefault();
+          card.click();
+        }
+      })
+    })
+
+    // Inicializa
+    mountImages();
+  </script>
+</body>
+</html>
